@@ -13,11 +13,6 @@
  */
 
 $english = array(
-
-/**
- * Menu items and titles
- */
-'autosubscribe:list' => "Groups' ids (separated by commas): ",
+	'autosubscribe:list' => "Groups' ids (separated by commas): ",
 );
-
 add_translation("en",$english);

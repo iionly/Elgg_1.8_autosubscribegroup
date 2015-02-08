@@ -17,14 +17,11 @@
  * Init
  *
  */
-function autosubscribegroup_init() {
-    //group plugin disabled : no need to go further...
-    if (!elgg_is_active_plugin("groups")) {
-        return;
-    }
+elgg_register_event_handler('init', 'system', 'autosubscribegroup_init');
 
-    //Listen to user registration
-    elgg_register_event_handler('create', 'user', 'autosubscribegroup_join', 502);
+function autosubscribegroup_init() {
+	// Listen to user registration
+	elgg_register_event_handler('create', 'user', 'autosubscribegroup_join', 502);
 }
 
 /**
@@ -33,25 +30,26 @@ function autosubscribegroup_init() {
  */
 function autosubscribegroup_join($event, $object_type, $object) {
 
-    if (($object instanceof ElggUser) && ($event == 'create') && ($object_type == 'user')) {
-        //auto submit relationships between user & groups
-        //retrieve groups ids from plugin
-        $groups = elgg_get_plugin_setting('systemgroups');
-        $groups = split(',', $groups);
+	if (($object instanceof ElggUser) && ($event == 'create') && ($object_type == 'user')) {
+		//auto submit relationships between user & groups
+		//retrieve groups ids from plugin
+		$groups = elgg_get_plugin_setting('systemgroups', 'autosubscribegroup');
+		$groups = split(',', $groups);
 
-        //for each group ids
-        foreach($groups as $groupId) {
-            //if group exist : submit to group
-            if ($groupEnt = get_entity($groupId)) {
-                //join group succeed ?
-                if ($groupEnt->join($object)) {
-                    // Remove any invite or join request flags
-                    elgg_delete_metadata(array('guid' => $object->guid, 'metadata_name' => 'group_invite', 'metadata_value' => $groupEnt->guid, 'limit' => 0));
-                    elgg_delete_metadata(array('guid' => $object->guid, 'metadata_name' => 'group_join_request', 'metadata_value' => $groupEnt->guid, 'limit' => 0));
-                }
-            }
-        }
-    }
+		//for each group ids
+		foreach($groups as $groupId) {
+			$ia = elgg_set_ignore_access(true);
+			$groupEnt = get_entity($groupId);
+			elgg_set_ignore_access($ia);
+			//if group exist : submit to group
+			if ($groupEnt) {
+				//join group succeed?
+				if ($groupEnt->join($object)) {
+					// Remove any invite or join request flags
+					elgg_delete_metadata(array('guid' => $object->guid, 'metadata_name' => 'group_invite', 'metadata_value' => $groupEnt->guid, 'limit' => false));
+					elgg_delete_metadata(array('guid' => $object->guid, 'metadata_name' => 'group_join_request', 'metadata_value' => $groupEnt->guid, 'limit' => false));
+				}
+			}
+		}
+	}
 }
-
-elgg_register_event_handler('init', 'system', 'autosubscribegroup_init');

@@ -18,7 +18,7 @@
 <p>
 <?php echo elgg_echo('autosubscribe:list')."<br>"; ?>
 <?php
-    echo elgg_view('input/text', array('name' => 'params[systemgroups]', 'value' => $vars['entity']->systemgroups));
-    echo "<br>"
+	echo elgg_view('input/text', array('name' => 'params[systemgroups]', 'value' => $vars['entity']->systemgroups));
+	echo "<br>"
 ?>
 </p>

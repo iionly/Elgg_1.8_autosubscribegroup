@@ -31,6 +31,11 @@ Press save and you are done.
 
 Changelog:
 
+1.8.1:
+
+ - Fix for the autosubscription to work also in case of groups with restricted visibility (anything else than "public"),
+ - German translation added.
+
 1.8.0:
 
  - Upgraded for Elgg 1.8 (by iionly)
